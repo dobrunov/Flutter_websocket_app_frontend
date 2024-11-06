@@ -72,17 +72,20 @@ class _MyHomePageState extends State<MyHomePage> {
                 style: Theme.of(context).textTheme.headlineMedium,
               );
             }),
+            ElevatedButton(
+                onPressed: () {
+                  store.main.incrementCounter();
+                },
+                child: const Text('Manual Increment')),
+            ElevatedButton(
+                onPressed: () {
+                  socket.sendMessage({"type": SocketMessageType.incrementCounter, "data": ""});
+                },
+                child: const Text('Increment from server'))
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          store.main.incrementCounter();
-          socket.sendMessage({"type": "Test", "data": ""});
-        },
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

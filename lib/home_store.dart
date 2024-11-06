@@ -1,5 +1,7 @@
 import 'package:mobx/mobx.dart';
 
+import 'counter_model.dart';
+
 part 'home_store.g.dart';
 
 class HomePage = HomePageBase with _$HomePage;
@@ -19,6 +21,17 @@ abstract class HomePageBase with Store {
   @action
   void incrementCounter() {
     counter = counter + 1;
+  }
+
+  @action
+  void updateCounter(data) {
+    var counterValue = Counter.fromJson(data);
+    counter = counterValue.value;
+  }
+
+  @action
+  void resetCounter() {
+    counter = 0;
   }
 
   @observable

@@ -17,9 +17,6 @@ class WebSocketClient {
     _connect();
   }
 
-  // // Getter for stream
-  // Stream<dynamic> get stream => _webSocketChannel!.stream;
-
   void _connect() {
     _webSocketChannel?.sink.close();
 
@@ -32,7 +29,7 @@ class WebSocketClient {
 
     _webSocketChannel!.stream.listen(
       (event) {
-        _reconnectAttempts = 0; // Reset reconnect attempts on successful message
+        _reconnectAttempts = 0;
         store.main.updateConnectedState(true);
         _handleMessage(event);
       },
@@ -72,8 +69,8 @@ class WebSocketClient {
     final Map<String, dynamic> jsonData = jsonDecode(event);
 
     switch (jsonData['type']) {
-      case SocketMessageType.testOne:
-        store.main.incrementCounter();
+      case SocketMessageType.updateCounter:
+        store.main.updateCounter(jsonData['data']);
         break;
 
       case SocketMessageType.testTwo:
@@ -89,6 +86,7 @@ class WebSocketClient {
 }
 
 class SocketMessageType {
-  static const testOne = "TestOne";
+  static const updateCounter = "UpdateCounter";
+  static const incrementCounter = "IncrementCounter";
   static const testTwo = "TestTwo";
 }

@@ -1,6 +1,6 @@
 import 'package:mobx/mobx.dart';
 
-import 'counter_model.dart';
+import '../models/counter_model.dart';
 
 part 'home_store.g.dart';
 
@@ -26,19 +26,11 @@ abstract class HomePageBase with Store {
   @action
   void updateCounter(data) {
     var counterValue = Counter.fromJson(data);
-    counter = counterValue.value;
+    counter = counter + counterValue.value;
   }
 
   @action
   void resetCounter() {
     counter = 0;
-  }
-
-  @observable
-  bool testTwo = false;
-
-  @action
-  void updateTestTwo(data) {
-    testTwo = data;
   }
 }

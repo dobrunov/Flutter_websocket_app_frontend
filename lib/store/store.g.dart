@@ -9,25 +9,25 @@ part of 'store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$AppState on AppStateBase, Store {
-  late final _$mainAtom = Atom(name: 'AppStateBase.main', context: context);
+  late final _$homeAtom = Atom(name: 'AppStateBase.home', context: context);
 
   @override
-  HomePage get main {
-    _$mainAtom.reportRead();
-    return super.main;
+  HomePage get home {
+    _$homeAtom.reportRead();
+    return super.home;
   }
 
   @override
-  set main(HomePage value) {
-    _$mainAtom.reportWrite(value, super.main, () {
-      super.main = value;
+  set home(HomePage value) {
+    _$homeAtom.reportWrite(value, super.home, () {
+      super.home = value;
     });
   }
 
   @override
   String toString() {
     return '''
-main: ${main}
+home: ${home}
     ''';
   }
 }

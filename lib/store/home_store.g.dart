@@ -41,22 +41,6 @@ mixin _$HomePage on HomePageBase, Store {
     });
   }
 
-  late final _$testTwoAtom =
-      Atom(name: 'HomePageBase.testTwo', context: context);
-
-  @override
-  bool get testTwo {
-    _$testTwoAtom.reportRead();
-    return super.testTwo;
-  }
-
-  @override
-  set testTwo(bool value) {
-    _$testTwoAtom.reportWrite(value, super.testTwo, () {
-      super.testTwo = value;
-    });
-  }
-
   late final _$HomePageBaseActionController =
       ActionController(name: 'HomePageBase', context: context);
 
@@ -83,11 +67,22 @@ mixin _$HomePage on HomePageBase, Store {
   }
 
   @override
-  void updateTestTwo(dynamic data) {
+  void updateCounter(dynamic data) {
     final _$actionInfo = _$HomePageBaseActionController.startAction(
-        name: 'HomePageBase.updateTestTwo');
+        name: 'HomePageBase.updateCounter');
     try {
-      return super.updateTestTwo(data);
+      return super.updateCounter(data);
+    } finally {
+      _$HomePageBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void resetCounter() {
+    final _$actionInfo = _$HomePageBaseActionController.startAction(
+        name: 'HomePageBase.resetCounter');
+    try {
+      return super.resetCounter();
     } finally {
       _$HomePageBaseActionController.endAction(_$actionInfo);
     }
@@ -97,8 +92,7 @@ mixin _$HomePage on HomePageBase, Store {
   String toString() {
     return '''
 showDisconnect: ${showDisconnect},
-counter: ${counter},
-testTwo: ${testTwo}
+counter: ${counter}
     ''';
   }
 }

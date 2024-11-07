@@ -10,5 +10,5 @@ class AppState = AppStateBase with _$AppState;
 
 abstract class AppStateBase with Store {
   @observable
-  HomePage main = HomePage();
+  HomePage home = HomePage();
 }

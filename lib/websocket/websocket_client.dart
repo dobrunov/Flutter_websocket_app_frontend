@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:flutter_websocket_client/store.dart';
+import 'package:flutter_websocket_client/store/store.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class WebSocketClient {
@@ -20,27 +20,24 @@ class WebSocketClient {
   void _connect() {
     _webSocketChannel?.sink.close();
 
-    _webSocketChannel = WebSocketChannel.connect(
-      Uri.parse(uri),
-      protocols: {"websocket"},
-    );
+    _webSocketChannel = WebSocketChannel.connect(Uri.parse(uri));
 
-    store.main.updateConnectedState(true);
+    store.home.updateConnectedState(true);
 
     _webSocketChannel!.stream.listen(
       (event) {
         _reconnectAttempts = 0;
-        store.main.updateConnectedState(true);
+        store.home.updateConnectedState(true);
         _handleMessage(event);
       },
       onError: (error) async {
         log('[WebSocket Error]: $error');
-        store.main.updateConnectedState(false);
+        store.home.updateConnectedState(false);
         _handleReconnect();
       },
       onDone: () async {
         log('[WebSocket Disconnected]');
-        store.main.updateConnectedState(false);
+        store.home.updateConnectedState(false);
         _handleReconnect();
       },
       cancelOnError: true,
@@ -70,11 +67,7 @@ class WebSocketClient {
 
     switch (jsonData['type']) {
       case SocketMessageType.updateCounter:
-        store.main.updateCounter(jsonData['data']);
-        break;
-
-      case SocketMessageType.testTwo:
-        store.main.updateTestTwo(jsonData['data']);
+        store.home.updateCounter(jsonData['data']);
         break;
     }
   }
@@ -88,5 +81,4 @@ class WebSocketClient {
 class SocketMessageType {
   static const updateCounter = "UpdateCounter";
   static const incrementCounter = "IncrementCounter";
-  static const testTwo = "TestTwo";
 }

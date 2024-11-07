@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_websocket_client/socket.dart';
-import 'package:flutter_websocket_client/store.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_websocket_client/store/store.dart';
+import 'package:flutter_websocket_client/websocket/websocket_client.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
-  AppState appStore = AppState(); // Instantiate the store
+  AppState appStore = AppState();
 
-  WebSocketClient socket = WebSocketClient(appStore, "ws://127.0.0.1:8042/gui", delay: 15);
+  WebSocketClient socket = WebSocketClient(appStore, "ws://127.0.0.1:8042", delay: 15);
 
   runApp(MultiProvider(providers: [
     Provider<AppState>(create: (_) => appStore),
@@ -18,16 +18,15 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Flutter Websocket App',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Flutter Websocket App'),
     );
   }
 }
@@ -64,22 +63,22 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text(
-              'You have pushed the button this many times:',
+              'Click "manual" or "from server" to increment counter:',
             ),
             Observer(builder: (context) {
               return Text(
-                store.main.counter.toString(),
+                store.home.counter.toString(),
                 style: Theme.of(context).textTheme.headlineMedium,
               );
             }),
             ElevatedButton(
                 onPressed: () {
-                  store.main.incrementCounter();
+                  store.home.incrementCounter();
                 },
                 child: const Text('Manual Increment')),
             ElevatedButton(
                 onPressed: () {
-                  socket.sendMessage({"type": SocketMessageType.incrementCounter, "data": ""});
+                  socket.sendMessage({"type": SocketMessageType.incrementCounter, "data": "1"});
                 },
                 child: const Text('Increment from server'))
           ],

@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_websocket_client/provider/counter_provider.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+
+import '../providers/connection_provider.dart';
+import '../providers/counter_provider.dart';
 
 class WebSocketClient {
   final String uri;
@@ -22,21 +24,21 @@ class WebSocketClient {
     _webSocketChannel?.sink.close();
     _webSocketChannel = WebSocketChannel.connect(Uri.parse(uri), protocols: {"websocket"});
 
-    ref.read(counterProvider.notifier).updateConnectedState(true);
+    ref.read(connectionProvider.notifier).updateConnectedState(true);
     _webSocketChannel!.stream.listen(
       (event) {
         _reconnectAttempts = 0;
-        ref.read(counterProvider.notifier).updateConnectedState(true);
+        ref.read(connectionProvider.notifier).updateConnectedState(true);
         _handleMessage(event);
       },
       onError: (error) async {
         log('[WebSocket Error]: $error');
-        ref.read(counterProvider.notifier).updateConnectedState(false);
+        ref.read(connectionProvider.notifier).updateConnectedState(false);
         _handleReconnect();
       },
       onDone: () async {
         log('[WebSocket Disconnected]');
-        ref.read(counterProvider.notifier).updateConnectedState(false);
+        ref.read(connectionProvider.notifier).updateConnectedState(false);
         _handleReconnect();
       },
       cancelOnError: true,

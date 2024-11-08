@@ -4,14 +4,12 @@ import '../models/counter_model.dart';
 
 class CounterState {
   final int counter;
-  final bool showDisconnect;
 
-  CounterState({this.counter = 0, this.showDisconnect = false});
+  CounterState({this.counter = 0});
 
-  CounterState copyWith({int? counter, bool? showDisconnect}) {
+  CounterState copyWith({int? counter}) {
     return CounterState(
       counter: counter ?? this.counter,
-      showDisconnect: showDisconnect ?? this.showDisconnect,
     );
   }
 }
@@ -21,10 +19,6 @@ class CounterNotifier extends StateNotifier<CounterState> {
 
   void incrementCounter() {
     state = state.copyWith(counter: state.counter + 1);
-  }
-
-  void updateConnectedState(bool isConnected) {
-    state = state.copyWith(showDisconnect: !isConnected);
   }
 
   void updateCounter(data) {

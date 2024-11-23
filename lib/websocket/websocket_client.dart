@@ -2,46 +2,53 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:flutter_websocket_client/store/store.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+
+/// Интерфейс для обработки входящих сообщений.
+abstract class WebSocketEventHandler {
+  void onConnected();
+  void onDisconnected();
+  void onMessageReceived(Map<String, dynamic> message);
+  void onError(Object error);
+}
 
 class WebSocketClient {
   final String uri;
   final int delay;
-  final AppState store;
+  final WebSocketEventHandler handler;
+
   WebSocketChannel? _webSocketChannel;
   int _reconnectAttempts = 0;
-  final int maxReconnectAttempts = 5;
+  static const int maxReconnectAttempts = 5;
 
-  WebSocketClient(this.store, this.uri, {this.delay = 5}) {
+  WebSocketClient(this.handler, this.uri, {this.delay = 5}) {
     _connect();
   }
 
   void _connect() {
     _webSocketChannel?.sink.close();
-
     _webSocketChannel = WebSocketChannel.connect(Uri.parse(uri));
 
-    store.home.updateConnectedState(true);
+    handler.onConnected();
 
     _webSocketChannel!.stream.listen(
-      (event) {
-        _reconnectAttempts = 0;
-        store.home.updateConnectedState(true);
-        _handleMessage(event);
-      },
-      onError: (error) async {
-        log('[WebSocket Error]: $error');
-        store.home.updateConnectedState(false);
-        _handleReconnect();
-      },
-      onDone: () async {
-        log('[WebSocket Disconnected]');
-        store.home.updateConnectedState(false);
-        _handleReconnect();
-      },
+      (event) => _handleMessage(event),
+      onError: (error) => _onConnectionError(error),
+      onDone: _onConnectionDone,
       cancelOnError: true,
     );
+  }
+
+  void _onConnectionError(Object error) {
+    log('[WebSocket Error]: $error');
+    handler.onError(error);
+    _handleReconnect();
+  }
+
+  void _onConnectionDone() {
+    log('[WebSocket Disconnected]');
+    handler.onDisconnected();
+    _handleReconnect();
   }
 
   void _handleReconnect() async {
@@ -64,12 +71,7 @@ class WebSocketClient {
     log("[Incoming message]: $event");
 
     final Map<String, dynamic> jsonData = jsonDecode(event);
-
-    switch (jsonData['type']) {
-      case SocketMessageType.updateCounter:
-        store.home.updateCounter(jsonData['data']);
-        break;
-    }
+    handler.onMessageReceived(jsonData);
   }
 
   void dispose() {

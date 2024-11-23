@@ -4,6 +4,8 @@ import 'package:flutter_websocket_client/providers/connection_provider.dart';
 import 'package:flutter_websocket_client/providers/counter_provider.dart';
 import 'package:flutter_websocket_client/websocket/websocket_client.dart';
 
+import 'message_controller.dart';
+
 void main() {
   runApp(const ProviderScope(child: MyApp()));
 }
@@ -14,12 +16,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Websocket App',
+      title: 'Flutter WebSocket App',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Websocket App'),
+      home: const MyHomePage(title: 'Flutter WebSocket App'),
     );
   }
 }
@@ -34,17 +36,19 @@ class MyHomePage extends ConsumerStatefulWidget {
 }
 
 class MyHomePageState extends ConsumerState<MyHomePage> {
-  late WebSocketClient socket;
+  late WebSocketClient _client;
+  late MessageController _controller;
 
   @override
   void initState() {
     super.initState();
-    socket = WebSocketClient(ref, "ws://127.0.0.1:8042/gui", delay: 15);
+    _client = WebSocketClient("ws://127.0.0.1:8042/gui", delay: 15);
+    _controller = MessageController(_client, ref);
   }
 
   @override
   void dispose() {
-    socket.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -87,7 +91,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
                 onPressed: connectionState.showDisconnect
                     ? null
                     : () {
-                        socket.sendMessage({
+                        _controller.sendMessage({
                           "type": SocketMessageType.incrementCounter,
                           "data": {"value": 1}
                         });

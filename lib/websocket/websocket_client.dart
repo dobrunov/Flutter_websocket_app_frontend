@@ -1,44 +1,38 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-
-import '../providers/connection_provider.dart';
-import '../providers/counter_provider.dart';
 
 class WebSocketClient {
   final String uri;
   final int delay;
-  final WidgetRef ref;
   WebSocketChannel? _webSocketChannel;
+  StreamController<String> _messageStreamController = StreamController.broadcast();
+  Stream<String> get messages => _messageStreamController.stream;
   int _reconnectAttempts = 0;
   final int maxReconnectAttempts = 5;
 
-  WebSocketClient(this.ref, this.uri, {this.delay = 5}) {
-    // Delay the _connect method
-    Future.microtask(() => _connect());
+  WebSocketClient(this.uri, {this.delay = 5}) {
+    _connect();
   }
 
   void _connect() {
     _webSocketChannel?.sink.close();
     _webSocketChannel = WebSocketChannel.connect(Uri.parse(uri), protocols: {"websocket"});
 
-    ref.read(connectionProvider.notifier).updateConnectedState(true);
     _webSocketChannel!.stream.listen(
       (event) {
         _reconnectAttempts = 0;
-        ref.read(connectionProvider.notifier).updateConnectedState(true);
-        _handleMessage(event);
+        log('[WebSocket Message]: $event');
+        _messageStreamController.add(event);
       },
       onError: (error) async {
         log('[WebSocket Error]: $error');
-        ref.read(connectionProvider.notifier).updateConnectedState(false);
         _handleReconnect();
       },
       onDone: () async {
         log('[WebSocket Disconnected]');
-        ref.read(connectionProvider.notifier).updateConnectedState(false);
         _handleReconnect();
       },
       cancelOnError: true,
@@ -61,24 +55,9 @@ class WebSocketClient {
     _webSocketChannel?.sink.add(messageJson);
   }
 
-  void _handleMessage(String event) {
-    log("[Incoming message]: $event");
-    final Map<String, dynamic> jsonData = jsonDecode(event);
-
-    switch (jsonData['type']) {
-      case SocketMessageType.updateCounter:
-        ref.read(counterProvider.notifier).updateCounter(jsonData['data']);
-        break;
-    }
-  }
-
   void dispose() {
     _webSocketChannel?.sink.close();
     _webSocketChannel = null;
+    _messageStreamController.close();
   }
-}
-
-class SocketMessageType {
-  static const updateCounter = "UpdateCounter";
-  static const incrementCounter = "IncrementCounter";
 }

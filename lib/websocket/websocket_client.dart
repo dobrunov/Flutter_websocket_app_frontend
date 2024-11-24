@@ -4,7 +4,7 @@ import 'dart:developer';
 
 import 'package:web_socket_channel/web_socket_channel.dart';
 
-/// Интерфейс для обработки входящих сообщений.
+// Incoming messages handling interface
 abstract class WebSocketEventHandler {
   void onConnected();
   void onDisconnected();
@@ -63,7 +63,7 @@ class WebSocketClient {
 
   void sendMessage(Map<String, dynamic> message) {
     final messageJson = jsonEncode(message);
-    log("Sending message: $messageJson");
+    log("[Sending message]: $messageJson");
     _webSocketChannel?.sink.add(messageJson);
   }
 
@@ -78,9 +78,4 @@ class WebSocketClient {
     _webSocketChannel?.sink.close();
     _webSocketChannel = null;
   }
-}
-
-class SocketMessageType {
-  static const updateCounter = "UpdateCounter";
-  static const incrementCounter = "IncrementCounter";
 }

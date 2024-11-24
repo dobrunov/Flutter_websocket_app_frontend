@@ -3,7 +3,7 @@ import 'package:mobx/mobx.dart';
 import '../websocket/websocket_client.dart';
 import 'home_store.dart';
 
-part 'store.g.dart';
+part 'app_state.g.dart';
 
 class AppState = AppStateBase with _$AppState;
 
@@ -32,4 +32,9 @@ abstract class AppStateBase with Store implements WebSocketEventHandler {
   void onError(Object error) {
     home.updateConnectedState(false);
   }
+}
+
+class SocketMessageType {
+  static const updateCounter = "UpdateCounter";
+  static const incrementCounter = "IncrementCounter";
 }

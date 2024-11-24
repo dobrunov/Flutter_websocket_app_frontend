@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_websocket_client/store/store.dart';
+import 'package:flutter_websocket_client/store/app_state.dart';
 import 'package:flutter_websocket_client/websocket/websocket_client.dart';
 import 'package:provider/provider.dart';
 
@@ -90,6 +90,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 });
               },
               child: const Text('Increment from server'),
+            ),
+            ElevatedButton(
+              onPressed: store.home.testMessage,
+              child: const Text('Test message'),
             ),
           ],
         ),

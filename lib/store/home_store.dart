@@ -8,11 +8,11 @@ class HomePage = HomePageBase with _$HomePage;
 
 abstract class HomePageBase with Store {
   @observable
-  bool showDisconnect = false;
+  bool isDisconnected = false;
 
   @action
   void updateConnectedState(data) {
-    showDisconnect = data;
+    isDisconnected = data;
   }
 
   @observable
@@ -21,6 +21,11 @@ abstract class HomePageBase with Store {
   @action
   void incrementCounter() {
     counter = counter + 1;
+  }
+
+  @action
+  void testMessage() {
+    //
   }
 
   @action

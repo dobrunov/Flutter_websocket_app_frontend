@@ -7,7 +7,7 @@ import '../models/counter_model.dart';
 
 part 'app_state.g.dart';
 
-class AppState = AppStoreBase with _$AppStore;
+class AppState = AppStoreBase with _$AppState;
 
 abstract class AppStoreBase with Store {
   final MessageManager messageManager;
@@ -17,34 +17,28 @@ abstract class AppStoreBase with Store {
   }
 
   @observable
-  ObservableList<String> messages = ObservableList<String>();
-
-  @observable
   int counter = 0;
 
   void _handleIncomingMessages() {
     messageManager.incomingMessages.listen((message) {
-      messages.add(message);
-
       final decodedMessage = jsonDecode(message);
-      final type = decodedMessage['type'];
 
-      switch (type) {
+      switch (decodedMessage['type']) {
+        //
         case SocketMessageType.updateCounter:
-          final newCounter = Counter.fromJson(decodedMessage['data']);
-          log(newCounter.value.toString());
-          //
-          updateCounter(newCounter.value);
+          updateCounter(decodedMessage['data']);
           break;
+        //
         default:
-          log("[Unhandled message type]: $type");
+          log("[Unhandled message type]: ${decodedMessage['type']}");
       }
     });
   }
 
   @action
-  void updateCounter(int newValue) {
-    counter = counter + newValue;
+  void updateCounter(data) {
+    final newCounter = Counter.fromJson(data);
+    counter = counter + newCounter.value;
   }
 
   @action

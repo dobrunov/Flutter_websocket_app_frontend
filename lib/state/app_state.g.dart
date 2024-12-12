@@ -25,8 +25,35 @@ mixin _$AppState on AppStoreBase, Store {
     });
   }
 
+  late final _$connectedAtom =
+      Atom(name: 'AppStoreBase.connected', context: context);
+
+  @override
+  bool get connected {
+    _$connectedAtom.reportRead();
+    return super.connected;
+  }
+
+  @override
+  set connected(bool value) {
+    _$connectedAtom.reportWrite(value, super.connected, () {
+      super.connected = value;
+    });
+  }
+
   late final _$AppStoreBaseActionController =
       ActionController(name: 'AppStoreBase', context: context);
+
+  @override
+  dynamic updateConnectedState(dynamic connectedState) {
+    final _$actionInfo = _$AppStoreBaseActionController.startAction(
+        name: 'AppStoreBase.updateConnectedState');
+    try {
+      return super.updateConnectedState(connectedState);
+    } finally {
+      _$AppStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
 
   @override
   void updateCounter(dynamic data) {
@@ -64,7 +91,8 @@ mixin _$AppState on AppStoreBase, Store {
   @override
   String toString() {
     return '''
-counter: ${counter}
+counter: ${counter},
+connected: ${connected}
     ''';
   }
 }

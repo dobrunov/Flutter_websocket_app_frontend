@@ -15,10 +15,26 @@ abstract class AppStoreBase with Store {
 
   AppStoreBase(this.messageManager) {
     _handleIncomingMessages();
+    _handleConnectedState();
   }
 
   @observable
   int counter = 0;
+
+  @observable
+  bool connected = false;
+
+  _handleConnectedState() {
+    messageManager.connectionStateStream.listen((connectedState) {
+      log("Connected state changed to: $connectedState");
+      updateConnectedState(connectedState);
+    });
+  }
+
+  @action
+  updateConnectedState(connectedState){
+    connected = connectedState;
+  }
 
   void _handleIncomingMessages() {
     messageManager.incomingMessages.listen((message) {

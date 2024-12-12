@@ -34,20 +34,44 @@ class HomePageState extends State<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('Click "manual" or "from server" to increment counter:'),
+            Padding(
+              padding: const EdgeInsets.all(2.0),
+              child: const Text(
+                  'Connected'),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(2.0),
+              child: Observer(builder: (context) {
+                return Text(
+                  appState.connected.toString(),
+
+                );
+              }),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: const Text(
+                  'Click "manual" or "from server" to increment counter:'),
+            ),
             Observer(builder: (context) {
               return Text(
                 appState.counter.toString(),
                 style: Theme.of(context).textTheme.headlineMedium,
               );
             }),
-            ElevatedButton(
-              onPressed: () => appSocketMessages.manualIncrement(),
-              child: const Text('Manual Increment'),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                onPressed: () => appSocketMessages.manualIncrement(),
+                child: const Text('Manual Increment'),
+              ),
             ),
-            ElevatedButton(
-              onPressed: () => appSocketMessages.incrementFromServer(),
-              child: const Text('Increment from server'),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                onPressed: () => appSocketMessages.incrementFromServer(),
+                child: const Text('Increment from server'),
+              ),
             ),
           ],
         ),

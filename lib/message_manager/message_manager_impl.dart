@@ -7,6 +7,9 @@ class MessageManagerImpl implements MessageManager {
   MessageManagerImpl(this._webSocketClient);
 
   @override
+  Stream<bool> get connectionStateStream => _webSocketClient.connectionStateStream;
+
+  @override
   Stream<String> get incomingMessages => _webSocketClient.messages;
 
   @override

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_websocket_client/socket_messages/app_socket_messages.dart';
+import 'package:flutter_websocket_client/socket_messages/app_socket_messages_impl.dart';
 import 'package:flutter_websocket_client/state/app_state.dart';
 import 'package:flutter_websocket_client/websocket_client/websocket_client_impl.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +17,7 @@ void main() {
     MultiProvider(
       providers: [
         Provider<AppState>(create: (_) => appState),
+        Provider<AppSocketMessages>(create: (_) => AppSocketMessagesImpl(appState)),
       ],
       child: const MyApp(),
     ),

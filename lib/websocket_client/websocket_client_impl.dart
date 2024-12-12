@@ -13,16 +13,26 @@ class WebSocketClientImpl implements WebSocketClient {
   static const int maxReconnectAttempts = 5;
   WebSocketChannel? _channel;
   final _controller = StreamController<String>.broadcast();
+  final StreamController<bool> _connectionStateController = StreamController<bool>.broadcast();
+
+  void _updateConnectionState(bool newState) => _connectionStateController.add(newState);
+
+
 
   WebSocketClientImpl(this.url, {this.delay = 5}) {
+    _updateConnectionState(true);
     connect();
   }
+
+  @override
+  Stream<bool> get connectionStateStream => _connectionStateController.stream;
 
   @override
   connect() {
     disconnect();
     //
     _channel = WebSocketChannel.connect(Uri.parse(url));
+
     _channel?.stream.listen(
       (event) => _handleMessage(event),
       onError: (error) => _onConnectionError(error),
@@ -31,17 +41,20 @@ class WebSocketClientImpl implements WebSocketClient {
   }
 
   void _handleMessage(dynamic event) {
+    _updateConnectionState(true);
     log("[Incoming message]: $event");
     _controller.add(event);
   }
 
   void _onConnectionError(Object error) {
+    _updateConnectionState(false);
     log('[WebSocket Error]: $error');
     _controller.addError(error);
     _handleReconnect();
   }
 
   void _onConnectionDone() {
+    _updateConnectionState(false);
     log('[WebSocket Disconnected]');
     _controller.close();
     _handleReconnect();

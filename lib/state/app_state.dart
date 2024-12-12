@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:mobx/mobx.dart';
 import '../message_manager/message_manager.dart';
 import '../models/counter_model.dart';
+import '../socket_messages/socket_messages_type.dart';
 
 part 'app_state.g.dart';
 
@@ -24,11 +25,9 @@ abstract class AppStoreBase with Store {
       final decodedMessage = jsonDecode(message);
 
       switch (decodedMessage['type']) {
-        //
-        case SocketMessageType.updateCounter:
+        case SocketMessagesType.updateCounter:
           updateCounter(decodedMessage['data']);
           break;
-        //
         default:
           log("[Unhandled message type]: ${decodedMessage['type']}");
       }
@@ -46,22 +45,11 @@ abstract class AppStoreBase with Store {
     counter++;
   }
 
-  @action
-  void sendMessage(Map<String, dynamic> message) {
-    messageManager.sendMessage(message);
-  }
 
   @action
-  void incrementServerCounter() {
-    var message = {
-      "type": SocketMessageType.incrementCounter,
-      "data": "1",
-    };
+  void incrementServerCounter(Map<String, String> message) {
     messageManager.sendMessage(message);
   }
 }
 
-class SocketMessageType {
-  static const updateCounter = "UpdateCounter";
-  static const incrementCounter = "IncrementCounter";
-}
+

@@ -51,22 +51,11 @@ mixin _$AppState on AppStoreBase, Store {
   }
 
   @override
-  void sendMessage(Map<String, dynamic> message) {
-    final _$actionInfo = _$AppStoreBaseActionController.startAction(
-        name: 'AppStoreBase.sendMessage');
-    try {
-      return super.sendMessage(message);
-    } finally {
-      _$AppStoreBaseActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void incrementServerCounter() {
+  void incrementServerCounter(Map<String, String> message) {
     final _$actionInfo = _$AppStoreBaseActionController.startAction(
         name: 'AppStoreBase.incrementServerCounter');
     try {
-      return super.incrementServerCounter();
+      return super.incrementServerCounter(message);
     } finally {
       _$AppStoreBaseActionController.endAction(_$actionInfo);
     }

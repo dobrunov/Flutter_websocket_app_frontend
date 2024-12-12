@@ -5,13 +5,6 @@ import 'dart:developer';
 import 'package:flutter_websocket_client/websocket_client/websocket_client.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
-// Incoming messages handling interface
-// abstract class WebSocketEventHandler {
-//   void onConnected();
-//   void onDisconnected();
-//   void onMessageReceived(Map<String, dynamic> message);
-//   void onError(Object error);
-// }
 
 class WebSocketClientImpl implements WebSocketClient {
   final String url;
